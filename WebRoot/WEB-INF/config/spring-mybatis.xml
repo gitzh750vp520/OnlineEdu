@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd">
+	
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/OnlineEdu?useUnicode=true&amp;characterEncoding=utf-8" />
+		<property name="username" value="root" />
+		<property name="password" value="root" />
+	</bean>
+	
+	<!-- sessionFactory -->
+	<bean id="sessionFactory" 
+	class="org.mybatis.spring.SqlSessionFactoryBean" >
+		<property name="dataSource" ref="dataSource"/>
+		<!-- 自动扫描 -->
+		<property name="mapperLocations" value="classpath:com/online/edu/mapping/*.xml"/>
+		
+	</bean>
+	
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.online.edu.dao"/>
+		<property name="sqlSessionFactoryBeanName" value="sessionFactory"/>
+	</bean>
+	
+	<!-- 事务配置 -->
+	<bean id="txManager" 
+	class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="create*" propagation="REQUIRED" />
+			  <tx:method name="save*" propagation="REQUIRED" />
+			  <tx:method name="add*" propagation="REQUIRED" />
+			  <tx:method name="update*" propagation="REQUIRED" />
+            <tx:method name="remove*" propagation="REQUIRED" />
+            <tx:method name="del*" propagation="REQUIRED" />
+            <tx:method name="import*" propagation="REQUIRED" />
+             <tx:method name="get*" propagation="REQUIRED" />
+            <tx:method name="*"/>
+		</tx:attributes>
+ 	</tx:advice>
+ 	<!-- 配置切面 -->
+ 	<aop:config>
+ 		<aop:pointcut 
+ 		expression="execution(* com.online.edu.service.impl.*.*(..))" id="txPointcut"/>
+ 		<aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut"/>
+ 	</aop:config>
+</beans>

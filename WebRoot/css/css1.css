@@ -1,0 +1,19 @@
+a{text-decoration: none;color: pink}
+a:HOVER{text-decoration: underline;}
+.container{margin: 0 auto;width: 1000px;}
+.comment_list{width: 700px;}
+.reply_list{padding-left: 50px}
+
+
+#play_video{padding-left:100px;width: 800px;height: 400px;}
+#navigation{padding-left:100px; 800px;height: 30px;}
+#navigation li{display: inline-block;padding-left: 30px}
+#note{padding-left: 100px;width: 800px}
+#note li{display: inline-block;padding-left: 30px}
+#note_content li{display: block;padding-bottom: 10px}
+#note_content p{padding-left: 60px}
+#comment{padding-left: 100px;width: 800px;display: none;}
+
+.div-comment{width:680px;height:200px;border:1px red solid;margin-bottom: 3px;padding-left: 10px;padding-top: 10px}
+.div-reply{width:600px;height:70px;border:1px pink solid;padding-left:30px;padding-top: 10px;display: none}
+.show-name{color:cornflowerblue;font-weight: bold}

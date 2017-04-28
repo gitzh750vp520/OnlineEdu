@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.online.edu.dao.CollectDao">
+	<select id="getCollectByUserIdAndCourseId" resultType="com.online.edu.entity.Collect">
+		select id from tb_collect where uid = #{userId} and course_id = #{courseId}
+	</select>
+	<insert id="addNewCollect">
+		INSERT INTO 
+			tb_collect(uid,course_id)
+		VALUES
+			(#{user.id},#{course.id})
+	</insert>
+</mapper>

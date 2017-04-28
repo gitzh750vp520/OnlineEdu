@@ -1,0 +1,24 @@
+a{text-decoration: none;color: pink}
+a:hover{text-decoration: underline}
+.clear{clear: both}
+.content{width: 1000px;margin: 0 auto;}
+.header{width: 1000px;}
+#header-welcome{width: 300px;padding-left: 700px}
+#header-welcome span{color: orchid}
+#header-navigation{width: 1000px;background-color: red}
+#header-navigation li{display: inline-block;padding-right: 50px}
+.container{width: 1000px;}
+.container table{border: 1px palevioletred solid}
+.container td{height: 30px;border: 1px palevioletred solid }
+#left-div{float: left;width: 270px;height: 500px;padding-top: 50px;padding-left:20px;border:1px red solid;margin-right: 16px}
+#right-div{float: left;width: 670px;height: 500px;padding-top: 50px;padding-left:20px;border:1px red solid;}
+#add-admin table{border: 1px pink solid}
+#add-admin td{border: 0px}
+.footer{width:1000px;text-align: center;padding-top: 10px}
+#div-modeifyLoginPsw{display:none}
+#div-modifyAdminInfo{display:none}
+#show-category{float:left;width: 320px;padding-right:30px}
+#modify-category-name{float:left;width: 320px}
+
+
+

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.online.edu.dao.CategoryDao">
+	<resultMap type="com.online.edu.entity.Category" id="categoryMap">
+		<id property="id" column="id" javaType="int"/>
+		<result property="name" column="name" javaType="string"/>
+		<association property="superCategory" javaType="com.online.edu.entity.SuperCategory">
+			<id property="id" column="s_id" javaType="int"/>
+			<result property="name" column="s_name" javaType="string"/>
+		</association>
+	</resultMap>
+	<select id="getAllCategories" resultMap="categoryMap">
+		select 
+			c.id,c.name,p.id s_id ,p.name s_name 
+		from
+			 tb_category c
+		left join
+			tb_super_category p
+		on
+			p.id = c.super_category_id
+		limit #{rowStart},#{pageSize}
+	</select>
+	<select id="getAllCategoriesCount" resultType="Integer">
+		select count(*) from tb_Category
+	</select>
+	<select id="getCategoriesByParentId" resultMap="categoryMap">
+		select 
+			c.id,c.name,p.id s_id ,p.name s_name 
+		from
+			 tb_category c
+		left join
+			tb_super_category p
+		on
+			p.id = c.super_category_id
+		where 
+			p.id =#{superCategoryId}
+	</select>
+	<select id="getCategoriesNotesNotNullByUserId" resultMap="categoryMap">
+		
+			SELECT tcate.id ,tcate.name ,tcate.super_category_id s_id,tss.name s_name from tb_category tcate 
+				LEFT JOIN tb_super_category tss on tss.id = tcate.super_category_id
+
+
+			where tcate.id in(
+					SELECT tcr.category_id from tb_course tcr WHERE tcr.id in (
+
+								SELECT tcl.course_id from tb_catalog tcl where tcl.id in(
+
+												SELECT tn.catalog_id from tb_note tn  where tn.uid=#{uid} 
+													)
+												)
+									)
+		
+	
+	</select>
+	
+	
+	<select id="getCategoryById" resultMap="categoryMap">
+		select 
+			c.id,c.name,p.id s_id ,p.name s_name 
+		from
+			 tb_category c
+		left join
+			tb_super_category p
+		on
+			p.id = c.super_category_id
+		where 
+			c.id =#{categoryId}
+	</select>
+	<select id="getCategoryByName" resultMap="categoryMap">
+		select 
+			c.id,c.name,p.id s_id ,p.name s_name 
+		from
+			 tb_category c
+		left join
+			tb_super_category p
+		on
+			p.id = c.super_category_id
+		where 
+			c.name =#{name}
+	</select>
+	<select id="getAllCategoriesNoPaging" resultType="com.online.edu.entity.Category">
+		select id,name from tb_category
+	</select>
+	<insert id="addNewCategory">
+		insert into 
+			tb_category(name,super_category_id)
+		values(#{name},#{superCategory.id})
+	</insert>
+	
+	<update id="updateCategoryInfoById">
+		update tb_category
+			<set>
+				<if test="name !=null">
+					name=#{name}
+				</if>			
+				<if test="superCategory.id !=null">
+					,super_category_id=#{superCategory.id}
+				</if>
+			</set>
+			where id = #{id}
+	</update>
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.online.edu.dao.DealDao">
+	
+	<select id="getDealsByUserId" resultType="com.online.edu.entity.Deal">
+		SELECT *
+		FROM 
+			tb_deal
+		WHERE 
+			uid=#{userId}
+		LIMIT 
+			#{rowStart},#{pageSize}
+	</select>
+	
+	<select id="getDealsByUserIdCount" parameterType="Integer" resultType="Integer">
+		select count(*) from tb_deal where uid = #{id}
+	</select>
+	
+	<insert id="addNewDeal">
+		INSERT INTO
+			tb_deal(uid,gold,type,content,course_id,time)
+		VALUES
+			(#{user.id},#{gold},#{type},#{content},#{course.id},#{time})
+	</insert>
+</mapper>

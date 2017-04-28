@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.online.edu.dao.ReplyDao">
+	<resultMap type="com.online.edu.entity.Reply" id="myReply">
+		<id property="id" column="id" />
+		<result property="content" column="content" />
+		<association property="sendUser" javaType="com.online.edu.entity.User">
+			<id property="id" column="send_uid" />
+			<result property="name" column="send_name"/>
+		</association>
+		<association property="receiveUser" javaType="com.online.edu.entity.User">
+			<id property="id" column="receive_uid" />
+			<result property="name" column="receive_name"/>
+		</association>
+	</resultMap>
+	<select id="getRepliesByCommentId" parameterType="Integer" resultMap="myReply">
+		select r.id,r.content,r.send_uid,r.receive_uid,su.name as send_name,ru.name as receive_name
+		from tb_reply r
+		left join tb_user su on r.send_uid = su.id
+		left join tb_user ru on r.receive_uid = ru.id
+		where r.comment_id = #{commentId}
+	</select>
+	<insert id="addNewReply" parameterType="com.online.edu.entity.Reply">
+		insert into tb_reply(comment_id,send_uid,receive_uid,content) values(#{comment.id},#{sendUser.id},#{receiveUser.id},#{content})
+	</insert>
+
+
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.online.edu.dao.CoursewareDao">
+	<resultMap type="com.online.edu.entity.Courseware" id="myCourseware">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="fileName" column="fileName" />
+		<association property="course" javaType="com.online.edu.entity.Course">
+			<id property="id" column="course_id" />
+		</association>
+	</resultMap>
+	<select id="getCoursewareByCoursewareId" resultType="com.online.edu.entity.Courseware">
+		select id,name,fileName from tb_courseware where id = #{coursewareId}
+	</select>
+	<select id="getCoursewaresByCourseId" resultMap="myCourseware">
+		select id,name,fileName,course_id from tb_courseware where course_id=#{id}
+	</select>
+	<insert id="addNewCourseware" parameterType="com.online.edu.entity.Courseware">
+		insert into tb_courseware(name,fileName,course_id) values(#{name},#{fileName},#{course.id})
+	</insert>
+
+
+</mapper>

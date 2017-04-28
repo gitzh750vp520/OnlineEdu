@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.online.edu.dao.SuperCategoryDao">
+	<resultMap type="com.online.edu.entity.SuperCategory" id="onlySuper">
+		<id property="id" column="id" javaType="int" />
+		<result property="name" column="name" javaType="String" />
+	</resultMap>
+	<resultMap type="com.online.edu.entity.SuperCategory" id="superAndSub">
+		<id property="id" column="id" javaType="int" />
+		<result property="name" column="name" javaType="String" />
+		<collection property="subCategories" ofType="com.online.edu.entity.Category">
+			<id property="id" column="sub_id" javaType="int" />
+			<result property="name" column="sub_name" javaType="String" />
+			<association property="superCategory"
+				javaType="com.online.edu.entity.SuperCategory">
+				<id property="id" column="id" javaType="int" />
+				<result property="name" column="name" javaType="String" />
+			</association>
+		</collection>
+	</resultMap>
+	<select id="getAllSuperAndSubCategories" resultMap="superAndSub">
+		select
+			s.id,s.name,c.id sub_id,c.name sub_name 
+		from 
+			tb_super_category s 
+		left join 
+			tb_category c 
+		on c.super_category_id = s.id
+	</select>
+	
+	<select id="getAllSuperCategoriesNotesNotNullByUserId" resultMap="onlySuper">
+			SELECT ts.id ,ts.name from tb_super_category ts 
+
+				where ts.id in(
+					SELECT tcate.super_category_id from tb_category tcate where tcate.id in(
+					SELECT tcr.category_id from tb_course tcr WHERE tcr.id in (
+
+								SELECT tcl.course_id from tb_catalog tcl where tcl.id in(
+
+												SELECT tn.catalog_id from tb_note tn  where tn.uid= #{uid} 
+													)
+												)
+									)
+			)
+	</select>
+	
+	<select id="getAllSuperCategories" resultMap="onlySuper">
+		select 
+			id,name
+		from
+			 tb_super_category
+		limit #{rowStart},#{pageSize}
+	</select>
+	
+	<select id="getAllSuperCategoriesCount" resultType="int">
+		select 
+			count(*)
+		from
+			 tb_super_category
+	</select>
+	<select id="getSuperCategoryById" resultMap="onlySuper">
+		select 
+			id,name
+		from
+			tb_super_category
+		where id=#{superCategoryId}		
+	</select>
+	<select id="getSuperCategoryByName" resultMap="onlySuper">
+		select 
+			id,name
+		from
+			tb_super_category
+		where name=#{name}	
+	</select>
+	<insert id="addNewSuperCategory" keyProperty="newSuperCategory.id" useGeneratedKeys="true">
+	    insert into 
+	    	tb_super_category(name)
+	    values
+	    	(#{newSuperCategory.name})
+	</insert>
+	<update id="updateSuperCategoryInfoById">
+			update tb_super_category
+			set
+				name = #{name}
+			where
+				id=#{id}
+	</update>
+</mapper>

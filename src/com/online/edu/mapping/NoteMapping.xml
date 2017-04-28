@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.online.edu.dao.NoteDao">
+	<resultMap type="com.online.edu.entity.Note" id="myNote1">
+		<id property="id" column="id" />
+		<result property="content" column="content" />
+		<association property="user" javaType="com.online.edu.entity.User">
+			<id property="id" column="uid" />
+			<result property="name" column="name" />
+		</association>
+	</resultMap>
+	<resultMap type="com.online.edu.entity.Note" id="myNote2">
+		<id property="id" column="id" />
+		<result property="content" column="content" />
+		<association property="catalog" javaType="com.online.edu.entity.Catalog">
+			<id property="id" column="catalog_id" />
+			<result property="title" column="title" />
+		</association>
+	</resultMap>
+	<resultMap type="com.online.edu.entity.Note" id="myNote3">
+		<id property="id" column="id" />
+		<result property="content" column="content" />
+		<association property="catalog" javaType="com.online.edu.entity.Catalog">
+			<id property="id" column="catalog_id" />
+			<result property="title" column="title" />
+		</association>
+		<association property="user" javaType="com.online.edu.entity.User">
+			<id property="id" column="uid" />
+			<result property="name" column="name" />
+		</association>
+	</resultMap>
+	<select id="getOtherNotesByCatalogIdAndUserId" resultMap="myNote1">
+		select
+		n.id,n.content,n.uid,u.name from tb_note n,tb_user u
+		where n.uid = u.id and n.catalog_id = #{catalogId} and n.uid != #{userId}
+		limit #{rowStart},#{pageSize}
+	</select>
+	<select id="getOtherNotesByCatalogIdAndUserIdCount" resultType="Integer">
+		select count(*) from tb_note n
+		where n.catalog_id = #{catalogId} and
+		n.uid != #{userId}
+	</select>
+
+	<select id="getNotesByUseIdAndCatalogId" resultType="com.online.edu.entity.Note">
+		select
+		n.id,n.content from tb_note n,tb_user u
+		where n.uid = u.id and n.catalog_id = #{catalogId} and n.uid = #{userId}
+		limit #{rowStart},#{pageSize}
+	</select>
+	<select id="getNotesByUseIdAndCatalogIdCount" resultType="Integer">
+		select
+		count(*) from tb_note
+		where catalog_id = #{catalogId} and uid =
+		#{userId}
+	</select>
+	<select id="getNotesByUserId" resultMap="myNote2">
+		select
+		n.id,n.content,n.catalog_id,c.title from tb_note n,tb_user
+		u,tb_catalog c
+		where n.uid = u.id and n.catalog_id = c.id and n.uid =
+		#{userId}
+		limit #{rowStart},#{pageSize}
+	</select>
+	<select id="getNotesByUserIdCount" resultType="Integer">
+		select count(*)
+		from tb_note
+		where uid = #{uid}
+	</select>
+	<select id="getPendingNotes" resultMap="myNote3">
+		select
+		n.id,n.content,n.uid,u.name,n.catalog_id,c.title
+		from tb_note n,tb_user u,tb_catalog c
+		where n.uid = u.id and n.catalog_id = c.id and n.status = 0
+		limit
+		#{rowStart},#{pageSize}
+	</select>
+	<select id="getPendingNotesCount" resultType="Integer">
+		select count(*)
+		from tb_note
+		where status = 0
+	</select>
+	<insert id="addNewNote" parameterType="com.online.edu.entity.Note">
+		insert into
+		tb_note(catalog_id,uid,content)
+		values(#{catalog.id},#{user.id},#{content})
+	</insert>
+	<update id="updateNoteStatus">
+		update tb_note set status = #{status} where id =
+		#{noteId}
+	</update>
+
+	<select id="getUserNotesBySubCategoryId" resultMap="myNote2">
+		select
+		tn.id,tn.content,tcl.id catalog_id,tcl.title from tb_note tn
+		left join tb_catalog tcl
+		on tcl.id = tn.catalog_id
+		left join tb_course tcr
+		on tcr.id = tcl.course_id
+		where tcr.category_id = #{subCategoryId} and tn.uid =#{uid}
+		limit #{rowStart},#{pageSize}
+
+	</select>
+
+	<select id="getUserNotesBySuperCategoryId" resultMap="myNote2">
+		select
+		tn.id,tn.content ,tcl.id catalog_id ,tcl.title from tb_note tn
+		left join tb_catalog tcl
+		on tcl.id = tn.catalog_id
+		left join tb_course tcr
+		on tcr.id = tcl.course_id
+		left join tb_category tcate
+		on tcate.id = tcr.category_id
+		where tcate.super_category_id = #{superCategoryId} and tn.uid =#{uid}
+		limit #{rowStart},#{pageSize}
+	</select>
+	<select id="getUserNotesCountBySubCategoryId" resultType="int">
+		select
+		count(*) from tb_note tn
+		left join tb_catalog tcl
+		on tcl.id = tn.catalog_id
+		left join tb_course tcr
+		on tcr.id = tcl.course_id
+		where tcr.category_id = #{subCategoryId} and tn.uid =#{uid}
+		
+	</select>
+	
+	<select id="getUserNotesCountBySuperCategoryId" resultType="int">
+	
+		select
+		count(*) from tb_note tn
+		left join tb_catalog tcl
+		on tcl.id = tn.catalog_id
+		left join tb_course tcr
+		on tcr.id = tcl.course_id
+		left join tb_category tcate
+		on tcate.id = tcr.category_id
+		where tcate.super_category_id = #{superCategoryId} and tn.uid =#{uid}
+	
+	</select>
+</mapper>

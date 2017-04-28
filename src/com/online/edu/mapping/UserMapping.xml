@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.online.edu.dao.UserDao">
+	<sql id="userColumns">
+		id,loginId,loginPsw,name,photo
+		,type,sex,status,introduction,email,gold,handle
+	</sql>
+	<resultMap type="com.online.edu.entity.User" id="userMap">
+		<id property="id" column="id" javaType="int" />
+		<result property="loginId" column="loginId" javaType="string" />
+		<result property="loginPsw" column="loginPsw" javaType="string" />
+		<result property="name" column="name" javaType="string" />
+		<result property="photo" column="photo" javaType="string" />
+		<result property="type" column="type" javaType="int" />
+		<result property="sex" column="sex" javaType="boolean" />
+		<result property="status" column="status" javaType="boolean" />
+		<result property="introduction" column="introduction" javaType="string" />
+		<result property="email" column="email" javaType="string" />
+		<result property="gold" column="gold" javaType="int" />
+		<result property="handle" column="handle" javaType="int" />
+	</resultMap>
+	<select id="getUserById" resultMap="userMap">
+		select
+		<include refid="userColumns" />
+		from tb_user
+		where id=#{id}
+	</select>
+	<select id="getUserByLoginId" resultMap="userMap">
+		select
+		<include refid="userColumns" />
+		from tb_user
+		where loginId=#{loginId}
+	</select>
+	
+	<select id="getAllAvailableUser" resultMap="userMap">
+	
+		select
+			<include refid="userColumns" />
+		from tb_user
+			where handle !=101
+		limit #{rowStart},#{pageSize}
+	</select>
+	<select id="getAllAvailableUserCount" resultType="int">
+		select
+			count(*)
+		from tb_user
+			where handle !=101
+	</select>
+	
+	<select id="getRecentRegistTeachers" resultMap="userMap">
+		select
+			<include refid="userColumns" />
+		from tb_user
+			 where handle = 101
+		limit #{rowStart},#{pageSize}
+	</select>
+	<select id="getRecentRegistTeachersCount" resultType="int">
+		select
+			count(*)
+		from tb_user
+			 where handle = 101
+	</select>
+	<insert id="addNewUser" >
+		insert into 
+			tb_user(
+			loginId,loginPsw,name,photo
+			,type,sex,status,introduction,email,gold,handle)
+			values(#{insertUser.loginId},
+			#{insertUser.loginPsw},
+			#{insertUser.name},
+			#{insertUser.photo},
+			#{insertUser.type},
+			#{insertUser.sex},
+			#{insertUser.status},
+			#{insertUser.introduction},
+			#{insertUser.email},
+			#{insertUser.gold},#{insertUser.handle})
+	</insert>
+	<update id="updateUserInfoById">
+		update tb_user set 
+			loginPsw = #{updateUser.loginPsw},
+			name=#{updateUser.name},
+			photo=#{updateUser.photo},
+			sex=#{updateUser.sex},
+			status=#{updateUser.status},
+			introduction=#{updateUser.introduction},
+			email=#{updateUser.email},
+			handle=#{updateUser.handle},
+			gold=#{updateUser.gold}
+		where
+			id=#{updateUser.id}
+	</update>
+	<delete id="deleteUserByLoginId">
+		delete from tb_user where loginId = #{loginId}
+	</delete>
+</mapper>

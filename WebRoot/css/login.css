@@ -1,0 +1,63 @@
+#ld-head{
+	width:300px;
+	height:50px;
+	margin:20px auto;
+}
+#login-div{
+	width: 500px;
+	height:500px;
+	float:right;
+	margin-right: 40px;
+	background-color:#DBD7BD ;
+	border-radius:3px;	
+}
+#login-div table{
+	margin:90px auto;
+	color:#D94A4A;
+	font:"Î¢ÈíÑÅºÚ",Arial;
+	font-size:15px;
+}
+#login-title-student,#login-title-teacher{
+	cursor: pointer;
+	display: block;
+	width:120px;
+	height:30px;
+	padding:5px;
+	color:maroon;
+	float:left;
+	text-align:center;
+	line-height:30px;
+	border-radius:5px;	
+}
+#login-title-student{
+	background-color:salmon;
+}
+#login-title-teacher{
+	margin-left:20px;
+	background-color:sandybrown;	
+	
+}
+.nor-input{
+	
+	padding-left:10px;
+	width:200px;
+	background-color:sandybrown;
+	height:35px;
+	color: white;
+	margin:10px 20px;
+	border: none;
+	border-radius:3px;	
+}
+
+.submit-btn{
+	cursor: pointer;
+	text-align:center;
+	margin-left:50px;
+	border: none;
+	padding-left:10px;
+	width:120px;
+	background-color:sandybrown;
+	height:30px;
+	color: white;
+	border-radius:3px;	
+}

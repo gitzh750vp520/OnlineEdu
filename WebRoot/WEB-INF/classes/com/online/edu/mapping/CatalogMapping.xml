@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.online.edu.dao.CatalogDao">
+	
+	<insert id="addNewCatalog" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO 
+			tb_catalog(sequence,title,videoName,course_id)
+		VALUES
+			(#{sequence},#{title},#{videoName},#{course.id})
+	</insert>
+
+	<select id="getCatalogsByCourseId" resultType="com.online.edu.entity.Catalog">
+		SELECT * 
+		FROM 
+			tb_catalog
+		WHERE 
+			course_id=#{id}	
+		LIMIT 
+			#{rowStart},#{pageSize}	
+	</select>
+	<select id="getMaxSequenceByCourseId" resultType="Integer">
+		select max(sequence) from tb_catalog where course_id = #{courseId} group by course_id
+	</select>
+	<select id="getCatalogsByCourseIdCount" parameterType="Integer" resultType="Integer">
+		select count(*) from tb_catalog where course_id = #{id}
+	</select>
+	<select id="getCatalogByCatalogId" resultType="com.online.edu.entity.Catalog">
+		select id,title,videoName,clickTimes from tb_catalog where id = #{catalogId}
+	</select>
+	<update id="updateCatalogClickTimes">
+		update tb_catalog set clickTimes = clickTimes + 1 where id = #{catalogId}
+	</update>
+</mapper>

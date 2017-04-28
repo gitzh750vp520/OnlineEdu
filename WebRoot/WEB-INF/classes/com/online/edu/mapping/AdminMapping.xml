@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.online.edu.dao.AdminDao">
+	<select id="getAllCommonAdmins" resultType="com.online.edu.entity.Admin">
+		SELECT *
+		FROM 
+			tb_admin
+		WHERE type = 1
+		LIMIT 
+			#{rowStart},#{pageSize}
+	</select>
+
+	<select id="getAdminByLoginId" resultType="com.online.edu.entity.Admin">
+		SELECT *
+		FROM 
+			tb_admin
+		WHERE 
+			loginId=#{loginId}
+	</select>
+
+	<select id="getAdminById" resultType="com.online.edu.entity.Admin">
+		SELECT *
+		FROM 
+			tb_admin
+		WHERE 
+			id=#{id}
+	</select>
+	<select id="getAllCommonAdminsCount" resultType="Integer">
+		select count(*) from tb_admin where type = true
+	</select>
+	<insert id="addNewAdmin" keyProperty="id" useGeneratedKeys="true">
+		INSERT INTO 
+			tb_admin(loginId,loginPsw,name)
+		VALUES
+			(#{loginId},#{loginPsw},#{name})
+	</insert>
+	
+	<delete id="deleteAdminById">
+		DELETE FROM 
+			tb_admin
+		WHERE
+			id=#{id}
+	</delete>
+	
+	<update id="updateAdminInfoById">
+		UPDATE 
+			tb_admin
+		SET 
+			loginPsw=#{loginPsw},name=#{name},status=#{status}
+		WHERE loginId=#{loginId}
+	</update>
+
+</mapper>

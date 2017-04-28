@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.online.edu.dao.CourseDao">
+
+<sql id="sql_courseInfo">
+	select
+		c.id,c.title,
+		c.collect,c.point,c.target,c.suitable,c.demand,c.price,c.discount,c.status,c.time,c.photo,c.handle,
+		
+		u.id user_id,u.name user_name,u.photo user_photo,u.type
+		 user_type,u.sex user_sex,u.introduction user_introduction,u.email 
+		user_email,u.gold user_gold,
+		
+		ca.id category_id,ca.name category_name,sca.id superCategory_id,sca.name superCategory_id_name
+		
+		from
+			tb_course c
+		left join
+			tb_user u
+		on
+			c.uid = u.id
+		left join
+			tb_category ca
+		on
+			c.category_id = ca.id
+		left join
+			tb_super_category sca
+		on
+			sca.id = ca.super_category_id
+</sql>
+	<resultMap type="com.online.edu.entity.Course" id="courseMap">
+		<id property="id" column="id" javaType="int" />
+		<result property="title" column="title" javaType="string" />
+		<result property="photo" column="photo" javaType="string" />
+		<result property="suitable" column="suitable" javaType="string" />
+		<result property="demand" column="demand" javaType="string" />
+		<result property="target" column="target" javaType="string" />
+		<result property="collect" column="collect" javaType="int" />
+		<result property="point" column="point" javaType="double" />
+		<result property="price" column="price" javaType="int" />
+		<result property="discount" column="discount" javaType="double" />
+		<result property="status" column="status" javaType="boolean" />
+		<result property="handle" column="handle" javaType="int" />
+		<result property="time" column="time" javaType="java.util.Date" />
+		<association property="user" javaType="com.online.edu.entity.User">
+			<id property="id" column="user_id" javaType="int" />
+			<result property="name" column="user_name" javaType="string" />
+			<result property="photo" column="user_photo" javaType="string" />
+			<result property="type" column="user_type" javaType="int" />
+			<result property="sex" column="user_sex" javaType="boolean" />
+			<result property="introduction" column="user_introduction"
+				javaType="string" />
+			<result property="email" column="user_email" javaType="string" />
+			<result property="gold" column="user_gold" javaType="int" />
+		</association>
+		<association property="category" javaType="com.online.edu.entity.Category">
+			<id property="id" column="category_id" javaType="int" />
+			<result property="name" column="category_name" javaType="string" />
+			<association property="superCategory"
+				javaType="com.online.edu.entity.SuperCategory">
+				<id property="id" column="superCategory_id" javaType="int" />
+				<result property="name" column="superCategory_id_name"
+					javaType="string" />
+			</association>
+		</association>
+	</resultMap>
+	<select id="getCourses" resultMap="courseMap">
+		<include refid="sql_courseInfo"></include>
+		<where>
+			<if test="superCategory !=null">
+			sca.id = #{superCategory.id}
+			</if>
+			<if test="category !=null">
+			ca.id = #{category.id}
+			</if>
+			<if test="title !=null">
+			and c.title like concat(concat('%',#{title}),'%')
+			</if>
+			and c.handle = 101
+		</where>
+		<choose >
+			<when test="order==2">
+				order by c.point			
+			</when>
+			<when test="order==3">
+				order by c.price			
+			</when>
+			<when test="order==4">
+				order by c.time			
+			</when>
+			<when test="order==5">
+				order by c.collect			
+			</when>
+			<otherwise>
+				order by c.id
+			</otherwise>
+		</choose>
+		<if test="desc">
+			desc 
+		</if>
+		   limit #{rowStart},#{pageSize}
+	</select>
+	<select id="getCoursesCount" resultType="int">
+		select
+			count(*)
+		from
+			tb_course c
+		left join
+			tb_user u
+		on
+			c.uid = u.id
+		left join
+			tb_category ca
+		on
+			c.category_id = ca.id
+		left join
+			tb_super_category sca
+		on
+			sca.id = ca.super_category_id
+		<where>
+			<if test="superCategory !=null">
+			sca.id = #{superCategory.id}
+			</if>
+			<if test="category !=null">
+			ca.id = #{category.id}
+			</if>
+			<if test="title !=null">
+			and c.title like concat(concat('%',#{title}),'%')
+			</if>
+			and c.handle = 101
+		</where>
+	</select>
+	
+	<select id="getCoursesUserPurchased"  resultMap="courseMap">
+		select 
+			c.id,c.title,
+			c.collect,c.point,c.target,c.suitable,c.demand,c.price,c.discount,c.status,c.time,c.photo,
+		
+		u.id user_id,u.name user_name,u.photo user_photo,u.type
+		 user_type,u.sex user_sex,u.introduction user_introduction,u.email 
+		user_email,u.gold user_gold,
+		
+		ca.id category_id,ca.name category_name,sca.id superCategory_id,sca.name superCategory_id_name
+		 from 
+			tb_deal td
+		 right join
+		 	tb_course c
+		 on  
+		 	c.id= td.course_id
+		 left join
+			tb_user u
+		on
+			td.uid = u.id
+		left join
+			tb_category ca
+		on
+			c.category_id = ca.id
+		left join
+			tb_super_category sca
+		on
+			sca.id = ca.super_category_id
+		 where
+		 	td.uid = #{user.id} and c.handle = 101
+		 limit  #{rowStart},#{pageSize}
+	</select>
+	<select id="getCoursesUserPurchasedCount"  resultType="int">
+		select 
+			count(*)
+		 from 
+			tb_deal td
+			left join tb_course c
+			on c.id = td.course_id
+		 where
+		 	td.uid = #{user.id} and td.course_id is not null and c.handle = 101
+	</select>
+	<select id="getCoursesUserCollected" resultMap="courseMap">
+		select 
+			c.id,c.title,
+		c.collect,c.point,c.target,c.suitable,c.demand,c.price,c.discount,c.status,c.time,c.photo,
+		
+		u.id user_id,u.name user_name,u.photo user_photo,u.type
+		 user_type,u.sex user_sex,u.introduction user_introduction,u.email 
+		user_email,u.gold user_gold,
+		
+		ca.id category_id,ca.name category_name,sca.id superCategory_id,sca.name superCategory_id_name
+
+		 from 
+			tb_collect col
+		 left join
+		 	tb_course c
+		 on  
+		 	c.id= col.course_id
+		 left join
+			tb_user u
+		on
+			c.uid = u.id
+		left join
+			tb_category ca
+		on
+			c.category_id = ca.id
+		left join
+			tb_super_category sca
+		on
+			sca.id = ca.super_category_id
+		 where
+		 	col.uid = #{user.id} and c.handle = 101
+		 limit  #{rowStart},#{pageSize}
+	</select>
+	
+	<select id="getCoursesCountUserCollectedCount" resultType="int">
+		select 
+			count(*)
+		 from 
+			tb_collect col
+			left join tb_course c
+			on c.id = col.course_id
+		 where
+		 	col.uid = #{user.id} and c.handle = 101
+	</select>
+	
+	<select id="getCoursesUserUploaded" resultMap="courseMap">
+		<include refid="sql_courseInfo"></include>
+		where c.uid = #{user.id} 
+		 limit #{rowStart},#{pageSize}
+	</select>
+	
+	<select id="getCourseUserUploadedCount" resultType="int">
+		select
+			count(*)
+		from
+			tb_course c
+		where c.uid = #{user.id}
+	</select>
+	
+	<select id="getRecentUnavliableCourses" resultMap="courseMap">
+	<include refid="sql_courseInfo"></include>
+		where c.handle=100
+		 limit #{rowStart},#{pageSize}
+	</select>
+	<select id="getRecentUnavliableCoursesCount" resultType="int">
+		select
+			count(*)
+		from
+			tb_course c
+		where c.handle=100
+	</select>
+	
+	<select id="getCourseById" resultMap="courseMap">
+		<include refid="sql_courseInfo"></include>
+		where c.id = #{courseId}
+	</select>
+	<update id="updateCourseInfoById">
+		update tb_course
+			<set>
+				<if test="course.category.id !=null">
+					category_id = #{course.category.id},
+				</if>
+				<if test="course.title !=null">
+					title = #{course.title},
+				</if>
+				<if test="course.target !=null">
+					target = #{course.target},
+				</if>
+				<if test="course.suitable !=null">
+					suitable = #{course.suitable},
+				</if>
+				<if test="course.demand">
+					demand = #{course.demand},
+				</if>
+				<if test="course.price !=null">
+					price = #{course.price},
+				</if>
+				<if test="course.discount !=null">
+					discount = #{course.discount},
+				</if>
+				<if test="course.photo !=null">
+					photo = #{course.photo},
+				</if>
+				<if test="course.point !=null">
+					point = #{course.point},
+				</if>
+				<if test="course.collect !=null">
+					collect = #{course.collect},
+				</if>
+				<if test="course.status !=null">
+					status = #{course.status}
+				</if>
+			</set>
+	where id = #{course.id}
+	</update>
+	<update id="modifyCourseStatus">
+		update tb_course set status = #{status} where id = #{courseId}
+	</update>
+	<update id="modifyCourseHandle">
+		update tb_course set handle = #{handle} where id = #{courseId}
+	</update>
+	<insert id="addNewCourse">
+		insert into 
+			tb_course(uid,category_id,title,target,suitable,demand,price,discount,photo,time)
+		values(#{user.id},#{category.id},#{title},#{target},#{suitable},#{demand},#{price},#{discount},#{photo},#{time})
+	</insert>
+	<delete id="deleteCourseById">
+		delete from tb_course where id = #{courseId}
+	</delete>
+</mapper>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.online.edu.dao.CommentDao">
+	<resultMap type="com.online.edu.entity.Comment" id="myComment">
+		<id property="id" column="id" />
+		<result property="content" column="content"/>
+		<association property="user" javaType="com.online.edu.entity.User">
+			<id property="id" column="uid"/>
+			<result property="name" column="name" />
+		</association>
+		<collection property="replies" ofType="com.online.edu.entity.Reply">
+			<id property="id" column="rid" />
+			<result property="content" column="reply_content" />
+			<association property="sendUser" javaType="com.online.edu.entity.User">
+				<id property="id" column="send_uid"/>
+				<result property="name" column="send_name" />
+			</association>
+			<association property="receiveUser" javaType="com.online.edu.entity.User">
+				<id property="id" column="receive_uid"/>
+				<result property="name" column="receive_name" />
+			</association>
+			<association property="comment" javaType="com.online.edu.entity.Comment">
+				<id property="id" column="id" />
+			</association>
+		</collection>
+	</resultMap>
+	<resultMap type="com.online.edu.entity.Comment" id="myComment2">
+		<id property="id" column="id" />
+		<result property="content" column="content"/>
+		<association property="user" javaType="com.online.edu.entity.User">
+			<id property="id" column="uid"/>
+			<result property="name" column="name" />
+		</association>
+	</resultMap>
+	<select id="getCommentByCommentId" resultMap="myComment2">
+		select c.id,c.content,c.uid,u.name from tb_comment c,tb_user u
+		where c.uid = u.id and c.id = #{commentId}
+	</select>
+	<select id="getCommentsAndRepliesByCatalogId" parameterType="Integer" resultMap="myComment">
+		select c.id,c.content,c.uid,u.name,r.id as rid,r.content as reply_content,r.send_uid,su.name as send_name,r.receive_uid,ru.name as receive_name
+		from tb_comment c 
+		left join tb_user u on c.uid = u.id
+		left join tb_reply r on c.id = r.comment_id
+		left join tb_user su on r.send_uid = su.id
+		left join tb_user ru on r.receive_uid = ru.id
+		where c.catalog_id = #{catalogId}
+	</select>
+	<select id="getAllCommentsByCatalogId" resultMap="myComment2">
+		select c.id,c.content,c.uid,u.name
+		from tb_comment c,tb_user u
+		where c.uid = u.id and c.catalog_id = #{catalogId}
+		limit #{rowStart},#{pageSize}
+	</select>
+	<select id="getAllCommentsByCatalogIdCount" parameterType="Integer" resultType="Integer">
+		select count(*) from tb_comment where catalog_id = #{catalogId}
+	</select>
+	<insert id="addNewComment" parameterType="com.online.edu.entity.Comment">
+		insert into tb_comment(catalog_id,content,uid) values(#{catalog.id},#{content},#{user.id})
+	</insert>
+
+
+
+</mapper>
