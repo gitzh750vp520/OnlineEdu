@@ -18,6 +18,10 @@ public class UserServiceImpl implements UserService {
 	public Integer loginCheck(String loginId, String loginPsw,Integer type) {
 		User user = userDao.getUserByLoginId(loginId);
 		System.out.println("service User:"+user);
+		System.out.println("service User Type:" + user.getType() + type);
+		System.out.println(user.getType() + type);
+		System.out.println(user.getType() != type);
+		System.out.println(user==null);
 		if(user==null || user.getType() != type){
 			return 1;
 		}
