@@ -15,5 +15,6 @@ public class BaseController {
     public static void logAfter(Logger logger){  
         logger.info("end");  
         logger.info("");  
-    }  
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.online.edu.dao;
+﻿package com.online.edu.dao;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ public interface CategoryDao {
 	/**
 	 * 分页获取所有的子分类
 	 * @param rowStart 起始行
-	 * @param pageSize 页面最大显示条数
+	 * @param pageSize 页面最大显示的条数
 	 * @return 子分类实体的列表
 	 */
 	List<Category> getAllCategories(@Param("rowStart")Integer rowStart,@Param("pageSize")Integer pageSize);
